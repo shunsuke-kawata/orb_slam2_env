@@ -88,7 +88,6 @@ int main(int argc, char **argv)
 #endif
 
         // Pass the image to the SLAM system
-        cout << "This track was executed from file: " << __FILE__ << endl;
         SLAM.TrackMonocular(im,tframe);
 
 #ifdef COMPILEDWITHC11

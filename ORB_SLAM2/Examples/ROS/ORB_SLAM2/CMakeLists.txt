@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.4.6)
+project(ORB_SLAM2)
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
 
@@ -59,7 +60,6 @@ ${PROJECT_SOURCE_DIR}/../../../Thirdparty/DBoW2/lib/libDBoW2.so
 ${PROJECT_SOURCE_DIR}/../../../Thirdparty/g2o/lib/libg2o.so
 ${PROJECT_SOURCE_DIR}/../../../lib/libORB_SLAM2.so
 -lboost_system
--lopencv_imgproc
 )
 
 # Node for monocular camera
