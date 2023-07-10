@@ -78,10 +78,8 @@ int main(int argc, char **argv)
     ImageGrabber igb(&SLAM);
 
     ros::NodeHandle nodeHandler;
-    cout<<"GrabImage関数の呼び出し"<<endl;
     //ここから経過時間を取得すれば良い
     ros::Subscriber sub = nodeHandler.subscribe("/camera/image_raw", 1, &ImageGrabber::GrabImage,&igb);
-    cout<<"GrabImage関数の呼び出し後"<<endl;
 
     ros::spin();
 
@@ -99,7 +97,6 @@ int main(int argc, char **argv)
 
 void ImageGrabber::GrabImage(const sensor_msgs::ImageConstPtr& msg)
 {
-    cout<<"GrabImageの実行"<<endl;
     // Copy the ros image message to cv::Mat.
     cv_bridge::CvImageConstPtr cv_ptr;
     try

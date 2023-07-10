@@ -238,7 +238,6 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB,const cv::Mat &imD, const d
 
 cv::Mat Tracking::GrabImageMonocular(const cv::Mat &im, const double &timestamp)
 {
-    cout<<"GrabImageMonocularの実行"<<endl;
     mImGray = im;
 
     if(mImGray.channels()==3)
