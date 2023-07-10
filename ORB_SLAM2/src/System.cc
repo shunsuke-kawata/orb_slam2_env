@@ -26,6 +26,7 @@
 #include <thread>
 #include <pangolin/pangolin.h>
 #include <iomanip>
+#include<chrono>
 
 namespace ORB_SLAM2
 {
@@ -35,9 +36,8 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
         mbDeactivateLocalizationMode(false)
 {
     // Output welcome message
-
-    cout<<"ver3"<<endl;
-
+    
+    cout<<"コンストラクタの実行"<<endl;
     cout << "Input sensor was set to: ";
 
     if(mSensor==MONOCULAR)
@@ -214,6 +214,8 @@ cv::Mat System::TrackRGBD(const cv::Mat &im, const cv::Mat &depthmap, const doub
 
 cv::Mat System::TrackMonocular(const cv::Mat &im, const double &timestamp)
 {
+
+    cout<<"TrackMonocularの実行"<<endl;
     
     if(mSensor!=MONOCULAR)
     {
@@ -254,11 +256,19 @@ cv::Mat System::TrackMonocular(const cv::Mat &im, const double &timestamp)
         mbReset = false;
     }
     }
-    cout<<"test"<<endl;
     cv::Mat Tcw = mpTracker->GrabImageMonocular(im,timestamp);
-    //この部分で送信を行うが早すぎるため分岐を入れたい
-    // cout<<"timestamp  "<<timestampCopy<<endl;
-    cout<<""<<Tcw<<endl;
+     //現在時刻を取得
+    chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
+
+    // 時刻をミリ秒単位に変換
+    chrono::time_point<chrono::high_resolution_clock, chrono::seconds> now_ns = chrono::time_point_cast<chrono::seconds>(now);
+
+    // ミリ秒単位の値を取得
+    auto value = now_ns.time_since_epoch();
+
+    // ミリ秒単位の値を表示
+    cout << "現在時刻(秒）: " << value.count() - value.count()<< endl;
+
     unique_lock<mutex> lock2(mMutexState);
     mTrackingState = mpTracker->mState;
     mTrackedMapPoints = mpTracker->mCurrentFrame.mvpMapPoints;

@@ -41,6 +41,7 @@ public:
     void GrabImage(const sensor_msgs::ImageConstPtr& msg);
 
     ORB_SLAM2::System* mpSLAM;
+
 };
 
 int main(int argc, char **argv)
@@ -55,13 +56,30 @@ int main(int argc, char **argv)
         return 1;
     }    
 
+    //現在時刻を取得
+    chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
+
+    // 時刻をミリ秒単位に変換
+    chrono::time_point<chrono::high_resolution_clock, chrono::seconds> now_ns = chrono::time_point_cast<chrono::seconds>(now);
+
+    // ミリ秒単位の値を取得
+    auto value = now_ns.time_since_epoch();
+
+    // ミリ秒単位の値を表示
+    cout << "現在時刻(秒）: " << value.count() << endl;
+    
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
+    cout<<"Systemの呼び出しとコンストラクタの実行"<<endl;
     ORB_SLAM2::System SLAM(argv[1],argv[2],ORB_SLAM2::System::MONOCULAR,true);
 
+    cout<<"ImageGrabberのコンストラクタの実行"<<endl;
     ImageGrabber igb(&SLAM);
 
     ros::NodeHandle nodeHandler;
+    cout<<"GrabImage関数の呼び出し"<<endl;
+    //ここから経過時間を取得すれば良い
     ros::Subscriber sub = nodeHandler.subscribe("/camera/image_raw", 1, &ImageGrabber::GrabImage,&igb);
+    cout<<"GrabImage関数の呼び出し後"<<endl;
 
     ros::spin();
 
@@ -69,6 +87,7 @@ int main(int argc, char **argv)
     SLAM.Shutdown();
 
     // Save camera trajectory
+    cout<<"Saving"<<endl;
     SLAM.SaveKeyFrameTrajectoryTUM("KeyFrameTrajectory.txt");
 
     ros::shutdown();
@@ -78,6 +97,7 @@ int main(int argc, char **argv)
 
 void ImageGrabber::GrabImage(const sensor_msgs::ImageConstPtr& msg)
 {
+    cout<<"GrabImageの実行"<<endl;
     // Copy the ros image message to cv::Mat.
     cv_bridge::CvImageConstPtr cv_ptr;
     try
@@ -89,7 +109,6 @@ void ImageGrabber::GrabImage(const sensor_msgs::ImageConstPtr& msg)
         ROS_ERROR("cv_bridge exception: %s", e.what());
         return;
     }
-    cout<<"comment"<<endl;
     mpSLAM->TrackMonocular(cv_ptr->image,cv_ptr->header.stamp.toSec());
 }
 
