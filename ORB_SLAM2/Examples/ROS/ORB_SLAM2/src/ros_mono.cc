@@ -44,6 +44,8 @@ public:
 
 };
 
+chrono::high_resolution_clock::time_point start_time;
+
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "Mono");
@@ -57,13 +59,13 @@ int main(int argc, char **argv)
     }    
 
     //現在時刻を取得
-    chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
+    start_time = chrono::high_resolution_clock::now();
 
     // 時刻をミリ秒単位に変換
-    chrono::time_point<chrono::high_resolution_clock, chrono::seconds> now_ns = chrono::time_point_cast<chrono::seconds>(now);
+    chrono::time_point<chrono::high_resolution_clock, chrono::seconds> start_time_s = chrono::time_point_cast<chrono::seconds>(start_time);
 
     // ミリ秒単位の値を取得
-    auto value = now_ns.time_since_epoch();
+    auto value = start_time_s.time_since_epoch();
 
     // ミリ秒単位の値を表示
     cout << "現在時刻(秒）: " << value.count() << endl;

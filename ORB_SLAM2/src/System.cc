@@ -28,6 +28,8 @@
 #include <iomanip>
 #include<chrono>
 
+chrono::high_resolution_clock::time_point start_time;
+
 namespace ORB_SLAM2
 {
 
@@ -38,6 +40,15 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     // Output welcome message
     
     cout<<"コンストラクタの実行"<<endl;
+
+    //開始時刻を現在時刻に設定を取得
+    start_time = chrono::high_resolution_clock::now();
+    // // 時刻をミリ秒単位に変換
+    // chrono::time_point<chrono::high_resolution_clock, chrono::seconds> start_time_s = chrono::time_point_cast<chrono::seconds>(start_time);
+    // // ミリ秒単位の値を取得
+    // auto value = start_time_s.time_since_epoch();
+    // // ミリ秒単位の値を表示
+    // cout << "現在時刻(秒）: " << value.count() << endl;
     cout << "Input sensor was set to: ";
 
     if(mSensor==MONOCULAR)
@@ -119,7 +130,7 @@ cv::Mat System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const
         exit(-1);
     }   
 
-    // Check mode change
+    // Check mode change設定
     {
         unique_lock<mutex> lock(mMutexMode);
         if(mbActivateLocalizationMode)
@@ -261,13 +272,15 @@ cv::Mat System::TrackMonocular(const cv::Mat &im, const double &timestamp)
     chrono::high_resolution_clock::time_point now = chrono::high_resolution_clock::now();
 
     // 時刻をミリ秒単位に変換
-    chrono::time_point<chrono::high_resolution_clock, chrono::seconds> now_ns = chrono::time_point_cast<chrono::seconds>(now);
+    chrono::time_point<chrono::high_resolution_clock, chrono::seconds> now_s = chrono::time_point_cast<chrono::seconds>(now);
+    chrono::time_point<chrono::high_resolution_clock, chrono::seconds> start_time_s = chrono::time_point_cast<chrono::seconds>(start_time);
 
     // ミリ秒単位の値を取得
-    auto value = now_ns.time_since_epoch();
+    auto value_now = now_s.time_since_epoch();
+    auto value_start_time = start_time_s.time_since_epoch();
 
     // ミリ秒単位の値を表示
-    cout << "現在時刻(秒）: " << value.count() - value.count()<< endl;
+    cout << "現在時刻(秒）: " << value_now.count() - value_start_time.count()<< endl;
 
     unique_lock<mutex> lock2(mMutexState);
     mTrackingState = mpTracker->mState;
