@@ -4,8 +4,8 @@ from firebase_admin import firestore
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('elapsed_time', type=str, help='経過時間')
-parser.add_argument('string_arg', type=str, help='cv::matからの値をつなげた文字列')
+parser.add_argument('--elapsed_time', type=str, help='経過時間')
+parser.add_argument('--string_arg', type=str, help='cv::matからの値をつなげた文字列')
 args = parser.parse_args()
 # Firebaseのサービスアカウント情報
 try:
@@ -28,6 +28,8 @@ def send_data_to_firebase():
 if __name__=="__main__":
     
     if(args==None):
+        pass
+    elif(args.string_arg==None or args.elapsed_time==None):
         pass
     else:
         send_data_to_firebase()

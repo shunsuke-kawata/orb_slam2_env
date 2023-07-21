@@ -284,9 +284,8 @@ namespace ORB_SLAM2
         auto elapsed_time = value_now.count() - value_start_time.count();
         auto execution_elapsed_time = value_execution_time.count() - value_start_time.count();
 
-        if (elapsed_time - execution_elapsed_time > 1000)
+        if (elapsed_time - execution_elapsed_time > 2000)
         {
-            cout << "実行時刻(ミリ秒）: " << to_string(elapsed_time) << endl;
             // 新たな関数実行時刻を取得
             execution_time = now;
             // ここでfirebase通信を行う
@@ -300,12 +299,15 @@ namespace ORB_SLAM2
                     }         
                 }
 
-                string python_command = "python ./src/testpy_from_cpp.py ";
-                python_command+="\""+ to_string(elapsed_time)+"\""+" "+"\"" + matrixDataStr+"\"";
+                std::string python_command = "python ./src/testpy_from_cpp.py";
+                python_command += " --elapsed_time \"" + std::to_string(elapsed_time) + "\"";
+                python_command += " --string_arg \"" + matrixDataStr + "\"";
+
                     // Pythonスクリプトを実行
+                cout<<python_command<<endl;
         
                 system(python_command.c_str());
-                cout<<python_command<<endl;
+
             }
         }
 
