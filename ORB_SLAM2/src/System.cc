@@ -21,14 +21,20 @@
 #include "System.h"
 #include "Converter.h"
 #include "unistd.h"
+#include <unistd.h>
 #include <thread>
+#include <cstdlib>
 #include <pangolin/pangolin.h>
 #include <iomanip>
 #include <chrono>
+#include <iostream>
+#include <filesystem>
 
 chrono::high_resolution_clock::time_point start_time; //slamを開始した時刻
 chrono::high_resolution_clock::time_point execution_time; //前回関数を実行した時刻
-chrono::high_resolution_clock::time_point now;
+chrono::high_resolution_clock::time_point now; //現在時刻
+
+
 
 namespace ORB_SLAM2
 {
@@ -278,10 +284,21 @@ namespace ORB_SLAM2
         auto elapsed_time = value_now.count() - value_start_time.count();
         auto execution_elapsed_time = value_execution_time.count() - value_start_time.count();
 
-        if(elapsed_time-execution_elapsed_time>1000){
+        if(elapsed_time-execution_elapsed_time>10000){
+            char buffer[FILENAME_MAX];
+            if (getcwd(buffer, sizeof(buffer)) != nullptr) {
+                cout << "Current Directory: " << buffer << endl;
+            } else {
+            cerr << "Failed to get current directory." << endl;
+            system("ls -la");
+    }
             cout << "実行時刻(ミリ秒）: " << elapsed_time<< endl;
             //新たな関数実行時刻を取得
             execution_time = now;
+            // ここでfirebase通信を行う
+            const char* python_command = "python ./src/testpy_from_cpp.py";
+            // Pythonスクリプトを実行
+            system(python_command);
         }
         
 
