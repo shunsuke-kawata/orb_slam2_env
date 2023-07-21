@@ -29,12 +29,11 @@
 #include <chrono>
 #include <iostream>
 #include <filesystem>
+#include <opencv2/core/core.hpp>
 
-chrono::high_resolution_clock::time_point start_time; //slamを開始した時刻
-chrono::high_resolution_clock::time_point execution_time; //前回関数を実行した時刻
-chrono::high_resolution_clock::time_point now; //現在時刻
-
-
+chrono::high_resolution_clock::time_point start_time;     // slamを開始した時刻
+chrono::high_resolution_clock::time_point execution_time; // 前回関数を実行した時刻
+chrono::high_resolution_clock::time_point now;            // 現在時刻
 
 namespace ORB_SLAM2
 {
@@ -269,6 +268,7 @@ namespace ORB_SLAM2
             }
         }
         cv::Mat Tcw = mpTracker->GrabImageMonocular(im, timestamp);
+        std::string matrixDataStr;
         // 現在時刻を取得
         now = chrono::high_resolution_clock::now();
 
@@ -284,23 +284,32 @@ namespace ORB_SLAM2
         auto elapsed_time = value_now.count() - value_start_time.count();
         auto execution_elapsed_time = value_execution_time.count() - value_start_time.count();
 
-        if(elapsed_time-execution_elapsed_time>10000){
-            char buffer[FILENAME_MAX];
-            if (getcwd(buffer, sizeof(buffer)) != nullptr) {
-                cout << "Current Directory: " << buffer << endl;
-            } else {
-            cerr << "Failed to get current directory." << endl;
-            system("ls -la");
-    }
-            cout << "実行時刻(ミリ秒）: " << elapsed_time<< endl;
-            //新たな関数実行時刻を取得
+        if (elapsed_time - execution_elapsed_time > 1000)
+        {
+            cout << "実行時刻(ミリ秒）: " << to_string(elapsed_time) << endl;
+            // 新たな関数実行時刻を取得
             execution_time = now;
             // ここでfirebase通信を行う
-            const char* python_command = "python ./src/testpy_from_cpp.py";
-            // Pythonスクリプトを実行
-            system(python_command);
+            if (Tcw.rows != 0)
+            {
+                for (int i = 0; i < Tcw.rows; ++i)
+                {
+                    for (int j = 0; j < Tcw.cols; ++j)
+                    {
+                        matrixDataStr += to_string(Tcw.at<double>(i, j)) + ",";
+                    }
+                    
+                }
+
+                string python_command = "python ./src/testpy_from_cpp.py ";
+                    // Pythonスクリプトを実行
+            
+                python_command += "\"" + to_string(elapsed_time)+"\""+" ";
+                python_command += "\"" + matrixDataStr+"\"";
+                system(python_command.c_str());
+                cout<<python_command<<endl;
+            }
         }
-        
 
         // ミリ秒単位の経過時間を表示
         // cout << "経過時間(ミリ秒）: " << value_now.count() - value_start_time.count() << endl;
