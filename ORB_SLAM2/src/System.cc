@@ -297,15 +297,13 @@ namespace ORB_SLAM2
                     for (int j = 0; j < Tcw.cols; ++j)
                     {
                         matrixDataStr += to_string(Tcw.at<double>(i, j)) + ",";
-                    }
-                    
+                    }         
                 }
 
                 string python_command = "python ./src/testpy_from_cpp.py ";
+                python_command+="\""+ to_string(elapsed_time)+"\""+" "+"\"" + matrixDataStr+"\"";
                     // Pythonスクリプトを実行
-            
-                python_command += "\"" + to_string(elapsed_time)+"\""+" ";
-                python_command += "\"" + matrixDataStr+"\"";
+        
                 system(python_command.c_str());
                 cout<<python_command<<endl;
             }
