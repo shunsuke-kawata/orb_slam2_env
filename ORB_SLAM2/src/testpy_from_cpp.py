@@ -7,8 +7,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument('elapsed_time', type=str, help='経過時間')
 parser.add_argument('string_arg', type=str, help='cv::matからの値をつなげた文字列')
 args = parser.parse_args()
-print(args)
-
 # Firebaseのサービスアカウント情報
 try:
     cred = credentials.Certificate('./test-cpp-to-firebase-firebase-adminsdk-ruihs-55eb777c49.json')
