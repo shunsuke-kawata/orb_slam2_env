@@ -45,16 +45,28 @@ void MapDrawer::DrawMapPoints()
 {
     const vector<MapPoint*> &vpMPs = mpMap->GetAllMapPoints();
     const vector<MapPoint*> &vpRefMPs = mpMap->GetReferenceMapPoints();
+    MapPoint* highestP = mpMap->GetHighestMapPoint();
 
     set<MapPoint*> spRefMPs(vpRefMPs.begin(), vpRefMPs.end());
 
     if(vpMPs.empty())
         return;
+    if(highestP==nullptr){
+        ;
+    }else{
+        cv::Mat testAt = highestP->GetWorldPos();
+        cout<<"最も高い点"<<testAt.at<float>(0) << " " <<testAt.at<float>(1) << " " <<testAt.at<float>(2) <<endl;
+        cv::Mat Rwc = mCameraPose.rowRange(0,3).colRange(0,3).t();
+        cv::Mat twc = -Rwc*mCameraPose.rowRange(0,3).col(3);
+        cout<<"カメラの中心"<< twc.at<float>(0) << " " << twc.at<float>(1) << " " << twc.at<float>(2)<<endl;
+
+    }
 
     glPointSize(mPointSize);
     glBegin(GL_POINTS);
     glColor3f(0.0,0.0,0.0);
 
+    //黒の点を描画している
     for(size_t i=0, iend=vpMPs.size(); i<iend;i++)
     {
         if(vpMPs[i]->isBad() || spRefMPs.count(vpMPs[i]))
@@ -68,6 +80,7 @@ void MapDrawer::DrawMapPoints()
     glBegin(GL_POINTS);
     glColor3f(1.0,0.0,0.0);
 
+    //赤の点を描画している
     for(set<MapPoint*>::iterator sit=spRefMPs.begin(), send=spRefMPs.end(); sit!=send; sit++)
     {
         if((*sit)->isBad())

@@ -28,6 +28,9 @@
 
 #include<mutex>
 
+//使用する関数の宣言
+// void writeToTextFile(const std::string& filePath);
+
 namespace ORB_SLAM2
 {
 
