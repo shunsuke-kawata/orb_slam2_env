@@ -64,20 +64,23 @@ void Map::EraseKeyFrame(KeyFrame *pKF)
 MapPoint* Map::GetHighestMapPoint()
 {
     unique_lock<mutex> lock(mMutexMap);
+    vector<MapPoint*> allMapPoints = mvpReferenceMapPoints;
+
     // ベクターが空であるかどうかを確認
-    if (mvpReferenceMapPoints.empty()) {
+    if (allMapPoints.empty()) {
         return nullptr; // または必要に応じて空の場合の処理を行ってください
     }
     // 最初のマップポイントで初期化
-    MapPoint* highestPoint = mvpReferenceMapPoints[0];
+    MapPoint* highestPoint = allMapPoints[0];
     // 最も高いマップポイントを検索
-    for (size_t i = 1; i < mvpReferenceMapPoints.size(); i++) {
-        if (mvpReferenceMapPoints[i]->GetWorldPos().at<float>(2) > highestPoint->GetWorldPos().at<float>(2)) {
-            highestPoint = mvpReferenceMapPoints[i];
+    for (size_t i = 1; i < allMapPoints.size(); i++) {
+        if (allMapPoints[i]->GetWorldPos().at<float>(2) < highestPoint->GetWorldPos().at<float>(2)) {
+            highestPoint = allMapPoints[i];
         }
     }
+
     return highestPoint;
-}
+};
 
 
 void Map::SetReferenceMapPoints(const vector<MapPoint *> &vpMPs)
