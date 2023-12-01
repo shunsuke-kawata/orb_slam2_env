@@ -57,9 +57,11 @@ void MapDrawer::DrawMapPoints()
         cv::Mat testAt = highestP->GetWorldPos();
         cv::Mat Rwc = mCameraPose.rowRange(0,3).colRange(0,3).t();
         cv::Mat twc = -Rwc*mCameraPose.rowRange(0,3).col(3);
-        // cout<<calcDistance(twc,testAt)<<endl;
-        cout<<"最も高い点"<<testAt.at<float>(2)<<endl;
-        cout<<"カメラの座標"<<twc.at<float>(2)<<endl;
+        glBegin(GL_LINES);
+        glColor3f(0.0,0.0,1.0);
+        glVertex3f(testAt.at<float>(0),testAt.at<float>(1),testAt.at<float>(2));
+        glVertex3f(twc.at<float>(0),twc.at<float>(2),twc.at<float>(2));
+        glEnd();
 
     }
 
