@@ -27,7 +27,7 @@
 
 #include <mutex>
 
-
+float calcDistance(cv::Mat point1, cv::Mat point2);
 
 namespace ORB_SLAM2
 {
@@ -53,7 +53,7 @@ public:
     std::vector<KeyFrame*> GetAllKeyFrames();
     std::vector<MapPoint*> GetAllMapPoints();
     std::vector<MapPoint*> GetReferenceMapPoints();
-    MapPoint* GetHighestMapPoint(vector<MapPoint*> someMapPoints);
+    MapPoint* GetNearestMapPoint(vector<MapPoint*> someMapPoints,cv::Mat cameraPosition);
 
     long unsigned int MapPointsInMap();
     long unsigned  KeyFramesInMap();

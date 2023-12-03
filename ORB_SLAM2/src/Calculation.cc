@@ -3,7 +3,7 @@
 
 using namespace std;
 
-float calcDistance(cv::Mat cameraPosition, cv::Mat highestPoint){
-    float distance = sqrt(pow(highestPoint.at<float>(0)-cameraPosition.at<float>(0),2)+pow(highestPoint.at<float>(1)-cameraPosition.at<float>(1),2)+pow(highestPoint.at<float>(2)-cameraPosition.at<float>(2),2));
+float calcDistance(cv::Mat point1, cv::Mat point2){
+    float distance = sqrt(pow(point2.at<float>(0)-point1.at<float>(0),2)+pow(point2.at<float>(1)-point1.at<float>(1),2)+pow(point2.at<float>(2)-point1.at<float>(2),2));
     return distance;
 };

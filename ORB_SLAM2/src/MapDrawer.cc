@@ -59,27 +59,24 @@ void MapDrawer::DrawMapPoints(const bool bDrawCurrentPoints)
 
     if (bDrawCurrentPoints)
     {
-        MapPoint* highestP = mpMap->GetHighestMapPoint(vpCurrentMPs);
-        if(highestP==nullptr){
-        ;
-        }else{
+        cv::Mat Rwc = mCameraPose.rowRange(0,3).colRange(0,3).t();
+        cv::Mat twc = -Rwc*mCameraPose.rowRange(0,3).col(3);
+        if (vpCurrentMPs.size()>0){
+            MapPoint* highestP = mpMap->GetNearestMapPoint(vpCurrentMPs,twc);
             cv::Mat testAt = highestP->GetWorldPos();
-            cv::Mat Rwc = mCameraPose.rowRange(0,3).colRange(0,3).t();
-            cv::Mat twc = -Rwc*mCameraPose.rowRange(0,3).col(3);
-            glBegin(GL_LINES);
-            glColor3f(0.0,0.0,1.0);
-            glVertex3f(testAt.at<float>(0),testAt.at<float>(1),testAt.at<float>(2));
-            glVertex3f(twc.at<float>(0),twc.at<float>(2),twc.at<float>(2));
-            glEnd();
-            cout<<calcDistance(twc,testAt)<<endl;
-
+            if(highestP==nullptr){
+                ;
+            }else{
+                cout<<calcDistance(twc,testAt)<<endl;
+            }
         }
+
         // Define points
         glPointSize(5);
         glBegin(GL_POINTS);
         glColor3f(0.0, 1.0, 0.0);
 
-        // All map points
+        //currentFrameに写っている点飲み描画する
         for (std::vector<MapPoint *>::const_iterator i = vpCurrentMPs.begin(); i != vpCurrentMPs.end(); i++)
         {
             if ((*i)->isBad())
@@ -90,7 +87,11 @@ void MapDrawer::DrawMapPoints(const bool bDrawCurrentPoints)
         glEnd();
     }
 
-    //黒の点を描画している
+    /*
+    もともとあった描画処理
+    重くなるのと必要ないので一旦削除
+    */
+    // 黒の点を描画している
     for(size_t i=0, iend=vpMPs.size(); i<iend;i++)
     {
         if(vpMPs[i]->isBad() || spRefMPs.count(vpMPs[i]))

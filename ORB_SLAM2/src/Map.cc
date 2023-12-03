@@ -61,24 +61,26 @@ void Map::EraseKeyFrame(KeyFrame *pKF)
     // Delete the MapPoint
 }
 
-MapPoint* Map::GetHighestMapPoint(vector<MapPoint*> someMapPoints)
+MapPoint* Map::GetNearestMapPoint(vector<MapPoint*> someMapPoints,cv::Mat cameraPosition)
 {
     unique_lock<mutex> lock(mMutexMap);
-
     // ベクターが空であるかどうかを確認
     if (someMapPoints.empty()) {
         return nullptr; // または必要に応じて空の場合の処理を行ってください
     }
     // 最初のマップポイントで初期化
-    MapPoint* highestPoint = someMapPoints[0];
-    // 最も高いマップポイントを検索
+    MapPoint* nearestPoint = someMapPoints[0];
+    float distance = calcDistance(nearestPoint->GetWorldPos(),cameraPosition);
+    // 最もカメラと近い点を探索
     for (size_t i = 1; i < someMapPoints.size(); i++) {
-        if (someMapPoints[i]->GetWorldPos().at<float>(2) < highestPoint->GetWorldPos().at<float>(2)) {
-            highestPoint = someMapPoints[i];
+        float tmpDistance = calcDistance(someMapPoints[i]->GetWorldPos(),cameraPosition);
+        if (tmpDistance<distance) {
+            nearestPoint = someMapPoints[i];
+            distance = tmpDistance;
         }
     }
 
-    return highestPoint;
+    return nearestPoint;
 };
 
 
