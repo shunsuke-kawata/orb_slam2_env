@@ -46,32 +46,34 @@ void MapDrawer::DrawMapPoints(const bool bDrawCurrentPoints)
     const vector<MapPoint*> &vpMPs = mpMap->GetAllMapPoints();
     const vector<MapPoint*> &vpRefMPs = mpMap->GetReferenceMapPoints();
     const vector<MapPoint *> &vpCurrentMPs  = mpMap->GetCurrentMapPoints();   
-    MapPoint* highestP = mpMap->GetHighestMapPoint();
+    
 
     set<MapPoint*> spRefMPs(vpRefMPs.begin(), vpRefMPs.end());
 
     if(vpMPs.empty())
         return;
-    if(highestP==nullptr){
-        ;
-    }else{
-        cv::Mat testAt = highestP->GetWorldPos();
-        cv::Mat Rwc = mCameraPose.rowRange(0,3).colRange(0,3).t();
-        cv::Mat twc = -Rwc*mCameraPose.rowRange(0,3).col(3);
-        glBegin(GL_LINES);
-        glColor3f(0.0,0.0,1.0);
-        glVertex3f(testAt.at<float>(0),testAt.at<float>(1),testAt.at<float>(2));
-        glVertex3f(twc.at<float>(0),twc.at<float>(2),twc.at<float>(2));
-        glEnd();
-
-    }
-
+    
     glPointSize(mPointSize);
     glBegin(GL_POINTS);
     glColor3f(0.0,0.0,0.0);
 
     if (bDrawCurrentPoints)
     {
+        MapPoint* highestP = mpMap->GetHighestMapPoint(vpCurrentMPs);
+        if(highestP==nullptr){
+        ;
+        }else{
+            cv::Mat testAt = highestP->GetWorldPos();
+            cv::Mat Rwc = mCameraPose.rowRange(0,3).colRange(0,3).t();
+            cv::Mat twc = -Rwc*mCameraPose.rowRange(0,3).col(3);
+            glBegin(GL_LINES);
+            glColor3f(0.0,0.0,1.0);
+            glVertex3f(testAt.at<float>(0),testAt.at<float>(1),testAt.at<float>(2));
+            glVertex3f(twc.at<float>(0),twc.at<float>(2),twc.at<float>(2));
+            glEnd();
+            cout<<calcDistance(twc,testAt)<<endl;
+
+        }
         // Define points
         glPointSize(5);
         glBegin(GL_POINTS);

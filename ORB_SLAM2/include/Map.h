@@ -53,7 +53,7 @@ public:
     std::vector<KeyFrame*> GetAllKeyFrames();
     std::vector<MapPoint*> GetAllMapPoints();
     std::vector<MapPoint*> GetReferenceMapPoints();
-    MapPoint* GetHighestMapPoint();
+    MapPoint* GetHighestMapPoint(vector<MapPoint*> someMapPoints);
 
     long unsigned int MapPointsInMap();
     long unsigned  KeyFramesInMap();
