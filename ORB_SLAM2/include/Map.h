@@ -47,7 +47,9 @@ public:
     void SetReferenceMapPoints(const std::vector<MapPoint *> &vpMPs);
     void InformNewBigChange();
     int GetLastBigChangeIdx();
-
+    void AddCurrentMapPoint(MapPoint *pMP);        // add
+    void EraseCurrentMapPoint();   
+    std::vector<MapPoint *> GetCurrentMapPoints(); 
     std::vector<KeyFrame*> GetAllKeyFrames();
     std::vector<MapPoint*> GetAllMapPoints();
     std::vector<MapPoint*> GetReferenceMapPoints();
@@ -70,6 +72,7 @@ public:
 protected:
     std::set<MapPoint*> mspMapPoints;
     std::set<KeyFrame*> mspKeyFrames;
+    std::set<MapPoint *> mspCurrentMapPoints; 
 
     std::vector<MapPoint*> mvpReferenceMapPoints;
 
