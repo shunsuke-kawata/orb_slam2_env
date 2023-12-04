@@ -41,7 +41,7 @@ public:
     MapDrawer(Map* pMap, const string &strSettingPath);
 
     Map* mpMap;
-
+    void CountNearMapPoints(const bool bDrawCurrentPoints);
     void DrawMapPoints(const bool bDrawCurrentPoints);
     void DrawKeyFrames(const bool bDrawKF, const bool bDrawGraph);
     void DrawCurrentCamera(pangolin::OpenGlMatrix &Twc);

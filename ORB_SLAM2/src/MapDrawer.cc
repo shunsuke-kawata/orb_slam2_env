@@ -27,7 +27,6 @@
 namespace ORB_SLAM2
 {
 
-
 MapDrawer::MapDrawer(Map* pMap, const string &strSettingPath):mpMap(pMap)
 {
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
@@ -41,13 +40,29 @@ MapDrawer::MapDrawer(Map* pMap, const string &strSettingPath):mpMap(pMap)
 
 }
 
+void MapDrawer::CountNearMapPoints(const bool bDrawCurrentPoints){
+    const vector<MapPoint *> &vpCurrentMPs  = mpMap->GetCurrentMapPoints(); 
+    if(bDrawCurrentPoints){
+        if (vpCurrentMPs.size()>0){
+            cv::Mat Rwc = mCameraPose.rowRange(0,3).colRange(0,3).t();
+            cv::Mat twc = -Rwc*mCameraPose.rowRange(0,3).col(3);
+            MapPoint* highestP = mpMap->GetNearestMapPoint(vpCurrentMPs,twc);
+            cv::Mat testAt = highestP->GetWorldPos();
+            if(highestP==nullptr){
+                ;
+            }else{
+                cout<<calcDistance(twc,testAt)<<"test"<<endl;
+            }
+        }
+    }
+
+}
 void MapDrawer::DrawMapPoints(const bool bDrawCurrentPoints)
 {
     const vector<MapPoint*> &vpMPs = mpMap->GetAllMapPoints();
     const vector<MapPoint*> &vpRefMPs = mpMap->GetReferenceMapPoints();
     const vector<MapPoint *> &vpCurrentMPs  = mpMap->GetCurrentMapPoints();   
     
-
     set<MapPoint*> spRefMPs(vpRefMPs.begin(), vpRefMPs.end());
 
     if(vpMPs.empty())
@@ -59,18 +74,6 @@ void MapDrawer::DrawMapPoints(const bool bDrawCurrentPoints)
 
     if (bDrawCurrentPoints)
     {
-        cv::Mat Rwc = mCameraPose.rowRange(0,3).colRange(0,3).t();
-        cv::Mat twc = -Rwc*mCameraPose.rowRange(0,3).col(3);
-        if (vpCurrentMPs.size()>0){
-            MapPoint* highestP = mpMap->GetNearestMapPoint(vpCurrentMPs,twc);
-            cv::Mat testAt = highestP->GetWorldPos();
-            if(highestP==nullptr){
-                ;
-            }else{
-                cout<<calcDistance(twc,testAt)<<endl;
-            }
-        }
-
         // Define points
         glPointSize(5);
         glBegin(GL_POINTS);

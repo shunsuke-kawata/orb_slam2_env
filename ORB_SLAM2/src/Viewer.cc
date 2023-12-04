@@ -129,10 +129,13 @@ void Viewer::Run()
         d_cam.Activate(s_cam);
         glClearColor(1.0f,1.0f,1.0f,1.0f);
         mpMapDrawer->DrawCurrentCamera(Twc);
-        if(menuShowKeyFrames || menuShowGraph)
+        if(menuShowKeyFrames || menuShowGraph){
             mpMapDrawer->DrawKeyFrames(menuShowKeyFrames,menuShowGraph);
-        if(menuShowPoints)
+        }
+        if(menuShowPoints){
             mpMapDrawer->DrawMapPoints(menuShowCurrentPoints);
+            mpMapDrawer->CountNearMapPoints(menuShowCurrentPoints);
+        }
 
         pangolin::FinishFrame();
 
