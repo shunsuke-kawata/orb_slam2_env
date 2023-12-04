@@ -51,7 +51,7 @@ void MapDrawer::CountNearMapPoints(const bool bDrawCurrentPoints){
             if(highestP==nullptr){
                 ;
             }else{
-                cout<<calcDistance(twc,testAt)<<"test"<<endl;
+                cout<<CalcDistance3Dim(twc,testAt)<<"test"<<endl;
             }
         }
     }

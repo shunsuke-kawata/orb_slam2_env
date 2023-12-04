@@ -30,7 +30,7 @@
 
 //使用する関数の宣言
 // void writeToTextFile(const std::string& filePath);
-float calcDistance(cv::Mat cameraPosition, cv::Mat highestPoint);
+float CalcDistance3Dim(cv::Mat cameraPosition, cv::Mat highestPoint);
 
 namespace ORB_SLAM2
 {
