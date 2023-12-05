@@ -70,6 +70,7 @@ void Viewer::Run()
     Twc.SetIdentity();
 
     cv::namedWindow("ORB-SLAM2: Current Frame");
+    cv::moveWindow("ORB-SLAM2: Current Frame",1024,768);
 
     bool bFollow = true;
     bool bLocalizationMode = false;
