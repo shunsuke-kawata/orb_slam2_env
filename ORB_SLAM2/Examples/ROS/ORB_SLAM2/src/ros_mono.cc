@@ -51,7 +51,17 @@ int main(int argc, char **argv)
     SLAM.SaveKeyFrameTrajectoryTUM("KeyFrameTrajectory.txt");
 
     ros::shutdown();
+        const char* command = "rosnode kill /usb_cam";
 
+    // シェルコマンドを実行
+    int result = system(command);
+
+    // 結果を確認
+    if (result == 0) {
+        cout<<"input killed"<<endl;
+    } else {
+        cout<<"failed to kill input"<<endl;
+    }
     return 0;
 }
 
