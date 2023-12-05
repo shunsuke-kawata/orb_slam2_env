@@ -30,7 +30,9 @@
 
 //使用する関数の宣言
 // void writeToTextFile(const std::string& filePath);
+float CalcDistance2Dim(cv::Mat point1, cv::Mat point2);
 float CalcDistance3Dim(cv::Mat cameraPosition, cv::Mat highestPoint);
+bool IsInCircle(cv::Mat center,cv::Mat point, float radius);
 
 namespace ORB_SLAM2
 {

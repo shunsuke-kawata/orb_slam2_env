@@ -70,10 +70,10 @@ MapPoint* Map::GetNearestMapPoint(vector<MapPoint*> someMapPoints,cv::Mat camera
     }
     // 最初のマップポイントで初期化
     MapPoint* nearestPoint = someMapPoints[0];
-    float distance = calcDistance(nearestPoint->GetWorldPos(),cameraPosition);
+    float distance = CalcDistance3Dim(nearestPoint->GetWorldPos(),cameraPosition);
     // 最もカメラと近い点を探索
     for (size_t i = 1; i < someMapPoints.size(); i++) {
-        float tmpDistance = calcDistance(someMapPoints[i]->GetWorldPos(),cameraPosition);
+        float tmpDistance = CalcDistance3Dim(someMapPoints[i]->GetWorldPos(),cameraPosition);
         if (tmpDistance<distance) {
             nearestPoint = someMapPoints[i];
             distance = tmpDistance;

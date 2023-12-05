@@ -46,12 +46,16 @@ void MapDrawer::CountNearMapPoints(const bool bDrawCurrentPoints){
         if (vpCurrentMPs.size()>0){
             cv::Mat Rwc = mCameraPose.rowRange(0,3).colRange(0,3).t();
             cv::Mat twc = -Rwc*mCameraPose.rowRange(0,3).col(3);
-            MapPoint* highestP = mpMap->GetNearestMapPoint(vpCurrentMPs,twc);
-            cv::Mat testAt = highestP->GetWorldPos();
-            if(highestP==nullptr){
-                ;
-            }else{
-                cout<<CalcDistance3Dim(twc,testAt)<<"test"<<endl;
+            MapPoint* nearestP = mpMap->GetNearestMapPoint(vpCurrentMPs,twc);
+            cv::Mat nearestPPos = nearestP->GetWorldPos();
+            int count = 0;
+            if(nearestP!=nullptr){
+                for (size_t i = 0; i < vpCurrentMPs.size(); i++) {
+                    if(IsInCircle(nearestPPos,vpCurrentMPs[i]->GetWorldPos(),0.5)){
+                        count+=1;
+                    }
+                }
+                cout<<count<<endl;
             }
         }
     }

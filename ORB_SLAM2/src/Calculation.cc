@@ -18,4 +18,4 @@ float CalcDistance3Dim(cv::Mat point1, cv::Mat point2){
 bool IsInCircle(cv::Mat center,cv::Mat point, float radius){
     float distance = CalcDistance2Dim(center,point);
     return distance<=radius; 
-    }
+}

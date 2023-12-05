@@ -27,7 +27,7 @@
 
 #include <mutex>
 
-float calcDistance(cv::Mat point1, cv::Mat point2);
+float CalcDistance3Dim(cv::Mat point1, cv::Mat point2);
 
 namespace ORB_SLAM2
 {
