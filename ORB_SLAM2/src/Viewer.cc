@@ -53,6 +53,10 @@ void Viewer::Run()
     pangolin::Var<bool> menuShowKeyFrames("menu.Show KeyFrames",true,true);
     pangolin::Var<bool> menuShowGraph("menu.Show Graph",true,true);
     pangolin::Var<bool> menuLocalizationMode("menu.Localization Mode",false,true);
+    pangolin::Var<bool> menuLocalizationModeCopy("menu.Localization Mode Copy",true,true);
+    pangolin::Var<std::string> inputX("menu.X座標", "0.2");
+    pangolin::Var<std::string> inputY("menu.Y座標", "0.2");
+    pangolin::Var<std::string> inputZ("menu.Z座標", "0.2");
     pangolin::Var<bool> menuReset("menu.Reset",false,false);
 
     // Define Camera Render Object (for view / scene browsing)
@@ -113,11 +117,15 @@ void Viewer::Run()
         if(menuShowKeyFrames || menuShowGraph){
             mpMapDrawer->DrawKeyFrames(menuShowKeyFrames,menuShowGraph);
         }
+        std::string userInputX = inputX.Get();
+        std::string userInputY = inputY.Get();
+        std::string userInputZ = inputZ.Get();
+    // ユーザー入力を必要に応じて処理します
+    // 例えば、それをコンソールに出力することができます
         if(menuShowPoints){
             mpMapDrawer->DrawMapPoints(menuShowCurrentPoints);
             mpMapDrawer->CountNearMapPoints(menuShowCurrentPoints);
         }
-
         pangolin::FinishFrame();
 
         cv::Mat im = mpFrameDrawer->DrawFrame();
