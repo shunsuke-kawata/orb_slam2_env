@@ -20,7 +20,7 @@ MapDrawer::MapDrawer(Map* pMap, const string &strSettingPath):mpMap(pMap)
 
 }
 
-void MapDrawer::CountNearMapPoints(const bool bDrawCurrentPoints){
+int MapDrawer::CountNearMapPoints(const bool bDrawCurrentPoints){
     const vector<MapPoint *> &vpCurrentMPs  = mpMap->GetCurrentMapPoints(); 
     if(bDrawCurrentPoints){
         if (vpCurrentMPs.size()>0){
@@ -28,17 +28,18 @@ void MapDrawer::CountNearMapPoints(const bool bDrawCurrentPoints){
             cv::Mat twc = -Rwc*mCameraPose.rowRange(0,3).col(3);
             MapPoint* nearestP = mpMap->GetNearestMapPoint(vpCurrentMPs,twc);
             cv::Mat nearestPPos = nearestP->GetWorldPos();
-            int count = 0;
             if(nearestP!=nullptr){
+                int sumOfNearPoints = 0;
                 for (size_t i = 0; i < vpCurrentMPs.size(); i++) {
                     if(IsInCircle(nearestPPos,vpCurrentMPs[i]->GetWorldPos(),0.5)){
-                        count+=1;
+                        sumOfNearPoints+=1;
                     }
                 }
-                cout<<count<<endl;
+                return sumOfNearPoints;
             }
         }
     }
+    return -1;
 
 }
 void MapDrawer::DrawMapPoints(const bool bDrawCurrentPoints)
@@ -100,7 +101,6 @@ void MapDrawer::DrawMapPoints(const bool bDrawCurrentPoints)
         glVertex3f(pos.at<float>(0),pos.at<float>(1),pos.at<float>(2));
 
     }
-
     glEnd();
 }
 

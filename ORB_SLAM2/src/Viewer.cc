@@ -1,7 +1,9 @@
 #include "Viewer.h"
 #include <pangolin/pangolin.h>
 #include "unistd.h"
-
+#include <stdio.h>
+#include <iostream>
+#include <fstream>
 #include <mutex>
 
 namespace ORB_SLAM2
@@ -30,10 +32,33 @@ Viewer::Viewer(System* pSystem, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer
     mViewpointY = fSettings["Viewer.ViewpointY"];
     mViewpointZ = fSettings["Viewer.ViewpointZ"];
     mViewpointF = fSettings["Viewer.ViewpointF"];
+    
 }
 
 void Viewer::Run()
 {
+    // /ORB_SLAM2/からの相対パスを記述
+    std::fstream armPositionTxt("../pos_txt/pos.txt");
+    float posX, posY, posZ;
+    if (armPositionTxt.is_open()) {
+        // ファイルが正常に開かれた場合に読み込みを行う
+        std::string line;
+        while (std::getline(armPositionTxt, line)) {
+            std::istringstream iss(line);
+            if (iss >> posX >> posY >> posZ) {
+                ;
+            } else {
+                // 読み込みが失敗した場合
+                cout<< "値の読み込みに失敗しました。" << endl;
+            }
+        }
+        // ファイルを閉じる
+        armPositionTxt.close();
+    } else {
+        // ファイルが開けなかった場合
+        cout<< "ファイルを開くことができませんでした。" <<endl;
+    }
+
     mbFinished = false;
     mbStopped = false;
 
@@ -53,10 +78,9 @@ void Viewer::Run()
     pangolin::Var<bool> menuShowKeyFrames("menu.Show KeyFrames",true,true);
     pangolin::Var<bool> menuShowGraph("menu.Show Graph",true,true);
     pangolin::Var<bool> menuLocalizationMode("menu.Localization Mode",false,true);
-    pangolin::Var<bool> menuLocalizationModeCopy("menu.Localization Mode Copy",true,true);
-    pangolin::Var<std::string> inputX("menu.X座標", "0.2");
-    pangolin::Var<std::string> inputY("menu.Y座標", "0.2");
-    pangolin::Var<std::string> inputZ("menu.Z座標", "0.2");
+    pangolin::Var<std::string> inputX("menu.X座標", std::to_string(posX));
+    pangolin::Var<std::string> inputY("menu.Y座標", std::to_string(posY));
+    pangolin::Var<std::string> inputZ("menu.Z座標", std::to_string(posZ));
     pangolin::Var<bool> menuReset("menu.Reset",false,false);
 
     // Define Camera Render Object (for view / scene browsing)
@@ -79,10 +103,19 @@ void Viewer::Run()
     bool bFollow = true;
     bool bLocalizationMode = false;
 
+    //初期値
+    float userInputToWriteX = std::stof(inputX.Get());
+    float userInputToWriteY = std::stof(inputY.Get());
+    float userInputToWriteZ = std::stof(inputZ.Get());
+    //テキストで保持する最大値の初期値
+    int maxOfNearPoints = -1;
+
+    bool isValidXYZ = false;
+    float userInputX,userInputY,userInputZ;
+
     while(1)
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         mpMapDrawer->GetCurrentOpenGLCameraMatrix(Twc);
 
         if(menuFollowCamera && bFollow)
@@ -117,15 +150,46 @@ void Viewer::Run()
         if(menuShowKeyFrames || menuShowGraph){
             mpMapDrawer->DrawKeyFrames(menuShowKeyFrames,menuShowGraph);
         }
-        std::string userInputX = inputX.Get();
-        std::string userInputY = inputY.Get();
-        std::string userInputZ = inputZ.Get();
-    // ユーザー入力を必要に応じて処理します
-    // 例えば、それをコンソールに出力することができます
+
+        //viewerから読み込む値と正しく読み込めているかを保持する変数
+        try {
+        //viewerの入力欄から取得した座標
+            userInputX = std::stof(inputX.Get());
+            userInputY = std::stof(inputY.Get());
+            userInputZ = std::stof(inputZ.Get());
+            isValidXYZ = true;
+        } catch (const std::invalid_argument& e) {
+        // 例外が発生した場合
+            cout << "Invalid Input: " << e.what() << std::endl;
+            isValidXYZ = false;
+        } catch (const std::out_of_range& e) {
+            // 例外が発生した場合
+            cout << "Out of range: " << e.what() << std::endl;
+            isValidXYZ = false;
+        }
+        //有効にxyzが入力されている場合実行する
+        if(isValidXYZ){
+            //入力による値の変更を検知
+            if(userInputToWriteX!=userInputX || userInputToWriteY!=userInputY || userInputToWriteZ!=userInputZ){
+                cout<<"write to file "<<maxOfNearPoints<<endl;
+                userInputToWriteX = userInputX;
+                userInputToWriteY = userInputY;
+                userInputToWriteZ = userInputZ;
+                //最大値を初期化と1秒間停止
+                maxOfNearPoints = -1;
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+            }else{
+                int sumOfNearPoints = mpMapDrawer->CountNearMapPoints(menuShowCurrentPoints);
+                if(sumOfNearPoints>maxOfNearPoints){
+                    maxOfNearPoints = sumOfNearPoints;
+                }
+            }
+            
+        }
         if(menuShowPoints){
             mpMapDrawer->DrawMapPoints(menuShowCurrentPoints);
-            mpMapDrawer->CountNearMapPoints(menuShowCurrentPoints);
         }
+
         pangolin::FinishFrame();
 
         cv::Mat im = mpFrameDrawer->DrawFrame();
@@ -154,7 +218,6 @@ void Viewer::Run()
                 usleep(3000);
             }
         }
-
         if(CheckFinish())
             break;
     }
