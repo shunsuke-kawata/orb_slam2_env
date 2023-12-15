@@ -179,14 +179,14 @@ void Viewer::Run()
             if(userInputToWriteX!=userInputX || userInputToWriteY!=userInputY || userInputToWriteZ!=userInputZ){
                 //現在のロボットアームの座標と特徴点の数をテキストに保持
                 std::fstream tmpArmPositionDatabaseTxt(armPositionDatabaseTextPath,std::ios::app);
-                tmpArmPositionDatabaseTxt<<userInputToWriteX<<" "<<userInputToWriteY<<" "<<userInputToWriteZ<<" "<<maxOfNearPoints<<endl;
+                tmpArmPositionDatabaseTxt<<fixed<<setprecision(2)<<userInputToWriteX<<" "<<userInputToWriteY<<" "<<userInputToWriteZ<<" "<<maxOfNearPoints<<endl;
                 tmpArmPositionDatabaseTxt.close();
 
                 userInputToWriteX = userInputX;
                 userInputToWriteY = userInputY;
                 userInputToWriteZ = userInputZ;
                 std::fstream tmpArmPositionTxt(armPositionTextPath);
-                tmpArmPositionTxt<<userInputToWriteX<<" "<<userInputToWriteY<<" "<<userInputToWriteZ;
+                tmpArmPositionTxt<<fixed<<setprecision(2)<<userInputToWriteX<<" "<<userInputToWriteY<<" "<<userInputToWriteZ;
                 //最大値を初期化と1秒間停止（アームの移動の前に特徴点が取得されることを防ぐため）
                 maxOfNearPoints = -1;
                 std::this_thread::sleep_for(std::chrono::seconds(2));
