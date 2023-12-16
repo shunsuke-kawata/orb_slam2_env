@@ -20,29 +20,42 @@ MapDrawer::MapDrawer(Map* pMap, const string &strSettingPath):mpMap(pMap)
 
 }
 
-int MapDrawer::CountNearMapPoints(const bool bDrawCurrentPoints){
+//近い点をカウントする関数
+int MapDrawer::CountNearMapPoints(const float radius){
     const vector<MapPoint *> &vpCurrentMPs  = mpMap->GetCurrentMapPoints(); 
-    if(bDrawCurrentPoints){
-        if (vpCurrentMPs.size()>0){
-            cv::Mat Rwc = mCameraPose.rowRange(0,3).colRange(0,3).t();
-            cv::Mat twc = -Rwc*mCameraPose.rowRange(0,3).col(3);
-            MapPoint* nearestP = mpMap->GetNearestMapPoint(vpCurrentMPs,twc);
-            cv::Mat nearestPPos = nearestP->GetWorldPos();
-            if(nearestP!=nullptr){
-                int sumOfNearPoints = 0;
-                for (size_t i = 0; i < vpCurrentMPs.size(); i++) {
-                    float perpendicularDistance = CalcPerpendicular(vpCurrentMPs[i]->GetWorldPos(),twc,nearestPPos);
-                    if(IsInCircleRange(perpendicularDistance,0.5)){
-                        sumOfNearPoints+=1;
-                    }
+    if (vpCurrentMPs.size()>0){
+        cv::Mat Rwc = mCameraPose.rowRange(0,3).colRange(0,3).t();
+        cv::Mat twc = -Rwc*mCameraPose.rowRange(0,3).col(3);
+        MapPoint* nearestP = mpMap->GetNearestMapPoint(vpCurrentMPs,twc);
+        cv::Mat nearestPPos = nearestP->GetWorldPos();
+        if(nearestP!=nullptr){
+            int sumOfNearPoints = 0;
+            for (size_t i = 0; i < vpCurrentMPs.size(); i++) {
+                float perpendicularDistance = CalcPerpendicular(vpCurrentMPs[i]->GetWorldPos(),twc,nearestPPos);
+                if(IsInCircleRange(perpendicularDistance,radius)){
+                    sumOfNearPoints+=1;
                 }
-                return sumOfNearPoints;
             }
+            return sumOfNearPoints;
         }
     }
+    
     return -1;
 
 }
+
+void MapDrawer::DrawRangeCircle(const float radius)
+{
+    const vector<MapPoint *> &vpCurrentMPs  = mpMap->GetCurrentMapPoints();
+    if (vpCurrentMPs.size()>0){
+        cv::Mat Rwc = mCameraPose.rowRange(0,3).colRange(0,3).t();
+        cv::Mat twc = -Rwc*mCameraPose.rowRange(0,3).col(3);
+        MapPoint* nearestP = mpMap->GetNearestMapPoint(vpCurrentMPs,twc);
+        cv::Mat nearestPPos = nearestP->GetWorldPos();
+    }
+    return;
+}
+
 void MapDrawer::DrawMapPoints(const bool bDrawCurrentPoints)
 {
     const vector<MapPoint*> &vpMPs = mpMap->GetAllMapPoints();

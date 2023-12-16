@@ -25,7 +25,8 @@ public:
     MapDrawer(Map* pMap, const string &strSettingPath);
 
     Map* mpMap;
-    int  CountNearMapPoints(const bool bDrawCurrentPoints);
+    int  CountNearMapPoints(const float radius);
+    void DrawRangeCircle(const float radius);
     void DrawMapPoints(const bool bDrawCurrentPoints);
     void DrawKeyFrames(const bool bDrawKF, const bool bDrawGraph);
     void DrawCurrentCamera(pangolin::OpenGlMatrix &Twc);
