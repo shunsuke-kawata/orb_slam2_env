@@ -44,7 +44,7 @@ int MapDrawer::CountNearMapPoints(const float radius){
 
 }
 
-void MapDrawer::DrawRangeCircle(const float radius)
+void MapDrawer::DrawRangeCircle(const float radius,const int angle)
 {
     const vector<MapPoint *> &vpCurrentMPs  = mpMap->GetCurrentMapPoints();
     if (vpCurrentMPs.size()>0){
@@ -52,6 +52,23 @@ void MapDrawer::DrawRangeCircle(const float radius)
         cv::Mat twc = -Rwc*mCameraPose.rowRange(0,3).col(3);
         MapPoint* nearestP = mpMap->GetNearestMapPoint(vpCurrentMPs,twc);
         cv::Mat nearestPPos = nearestP->GetWorldPos();
+
+        //視点と終点を結んだベクトル
+        cv::Mat directionVector = nearestPPos-twc;
+        //360度以上は入ってこないと想定
+        cv::Mat varticalVector = CalcVarticalVector(directionVector,radius);
+        //角度を360で割った数だけ描画をおこなう
+        //あおおの店で描画を行う
+        glPointSize(mPointSize);
+        glBegin(GL_LINE_LOOP);
+        glColor3f(0.0, 0.0, 1.0);
+        for (int i=0;i<360/angle;i++){
+            int tmpAngle = angle*i;
+            cout<<tmpAngle;
+            cv::Mat rotatedPoint = CalcRotatedPoint(directionVector,varticalVector,nearestPPos,tmpAngle);
+            glVertex3f(rotatedPoint.at<float>(0), rotatedPoint.at<float>(1), rotatedPoint.at<float>(2));
+        }
+        glEnd();
     }
     return;
 }

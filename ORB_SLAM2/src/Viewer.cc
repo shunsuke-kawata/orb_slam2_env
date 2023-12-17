@@ -122,7 +122,7 @@ void Viewer::Run()
     int maxOfNearPoints = -1;
 
     bool isValidUserInput = false;
-    float userInputX,userInputY,userInputZ,userInputRadius;
+    float userInputX,userInputY,userInputZ;
 
     while(1)
     {
@@ -168,7 +168,7 @@ void Viewer::Run()
             userInputX = std::stof(inputX.Get());
             userInputY = std::stof(inputY.Get());
             userInputZ = std::stof(inputZ.Get());
-            userInputRadius = std::stof(inputRadius.Get());
+            userInputToWriteRadius = std::stof(inputRadius.Get());
             isValidUserInput = true;
         } catch (const std::invalid_argument& e) {
         // 例外が発生した場合
@@ -197,17 +197,16 @@ void Viewer::Run()
                 maxOfNearPoints = -1;
                 std::this_thread::sleep_for(std::chrono::seconds(2));
             }else{
-                int sumOfNearPoints = mpMapDrawer->CountNearMapPoints(userInputRadius);
+                int sumOfNearPoints = mpMapDrawer->CountNearMapPoints(userInputToWriteRadius);
                 if(sumOfNearPoints>maxOfNearPoints){
                     maxOfNearPoints = sumOfNearPoints;
                 }
             }
             
-
-            //有効となる特徴点の範囲を描画
-            if(menuShowRangeCircle){
-                mpMapDrawer->DrawRangeCircle(userInputRadius);
-            }
+            // //有効となる特徴点の範囲を描画
+            // if(menuShowRangeCircle){
+            //     mpMapDrawer->DrawRangeCircle(userInputToWriteRadius,60);
+            // }
             
         }
         if(menuShowPoints){
