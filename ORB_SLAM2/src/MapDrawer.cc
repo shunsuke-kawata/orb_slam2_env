@@ -60,8 +60,8 @@ void MapDrawer::DrawRangeCircle(const float radius,const int angle)
         cv::Mat varticalVector = CalcVarticalVector(directionVector,radius);
         //角度を360で割った数だけ描画をおこなう
         //あおおの店で描画を行う
-        glPointSize(mPointSize);
-        glBegin(GL_LINE_LOOP);
+        glPointSize(mPointSize*4);
+        glBegin(GL_POINTS);
         glColor3f(0.0, 0.0, 1.0);
         for (int i=0;i<360/angle;i++){
             int tmpAngle = angle*i;
