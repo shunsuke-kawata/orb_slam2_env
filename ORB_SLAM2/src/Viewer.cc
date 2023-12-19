@@ -197,6 +197,7 @@ void Viewer::Run()
                 tmpArmPositionTxt<<fixed<<setprecision(2)<<userInputToWriteX<<" "<<userInputToWriteY<<" "<<userInputToWriteZ;
                 //最大値を初期化と1秒間停止（アームの移動の前に特徴点が取得されることを防ぐため）
                 maxOfNearPoints = -1;
+                inputDistance = -1;
                 labelSumOfPoint = 0;
                 std::this_thread::sleep_for(std::chrono::seconds(2));
             }else{
