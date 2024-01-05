@@ -86,7 +86,7 @@ void Viewer::Run()
     pangolin::Var<bool> menuShowKeyFrames("menu.Show KeyFrames",false,true);
     pangolin::Var<bool> menuShowGraph("menu.Show Graph",false,true);
     pangolin::Var<bool> menuLocalizationMode("menu.Localization Mode",false,true);
-    pangolin::Var<std::string> inputXYZ("menu.XYZ coordinate", std::to_string(posX)+std::to_string(posY)+std::to_string(posZ));
+    pangolin::Var<std::string> inputXYZ("menu.XYZ coordinate", removeTrailingZeros(std::to_string(posX))+" "+removeTrailingZeros((std::to_string(posY)))+" "+removeTrailingZeros((std::to_string(posZ))));
     pangolin::Var<std::string> inputRadius("menu.Radius", std::to_string(radius));
     pangolin::Var<float> inputDistance("menu.Distance",-1.0);
     pangolin::Var<int> labelSumOfPoint("menu.Feature Points", 0);
@@ -130,10 +130,10 @@ void Viewer::Run()
         userInputToWriteZ = std::stof(tmpZ);
     } catch (const std::invalid_argument& e) {
     // 例外が発生した場合
-        cout << "Invalid Input: " << e.what() << std::endl;
+        cout << "Invalid Input Init: " << e.what() << std::endl;
     } catch (const std::out_of_range& e) {
         // 例外が発生した場合
-        cout << "Out of range: " << e.what() << std::endl;
+        cout << "Out of range Init: " << e.what() << std::endl;
     }
 
     float userInputToWriteRadius = std::stof(inputRadius.Get());
