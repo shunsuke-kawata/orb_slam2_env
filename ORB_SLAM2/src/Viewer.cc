@@ -202,9 +202,8 @@ void Viewer::Run()
             cout << "Out of range: " << e.what() << std::endl;
             isValidUserInput = false;
         }
-        //有効にxyzが入力されている場合実行する
         if(isValidUserInput){
-            //入力による値の変更を検知
+            //入力による値の変更を検知setprecision(2)
             if(userInputToWriteX!=userInputX || userInputToWriteY!=userInputY || userInputToWriteZ!=userInputZ){
                 //現在のロボットアームの座標と特徴点の数をテキストに保持
                 std::fstream tmpArmPositionDatabaseTxt(armPositionDatabaseTextPath,std::ios::app);
