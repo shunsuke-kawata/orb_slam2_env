@@ -208,7 +208,7 @@ void Viewer::Run()
             if(userInputToWriteX!=userInputX || userInputToWriteY!=userInputY || userInputToWriteZ!=userInputZ){
                 //現在のロボットアームの座標と特徴点の数をテキストに保持
                 std::fstream tmpArmPositionDatabaseTxt(armPositionDatabaseTextPath,std::ios::app);
-                tmpArmPositionDatabaseTxt<<fixed<<setprecision(2)<<userInputToWriteX<<" "<<userInputToWriteY<<" "<<userInputToWriteZ<<" "<<maxOfNearPoints<<endl;
+                tmpArmPositionDatabaseTxt<<fixed<<setprecision(2)<<userInputToWriteX<<" "<<userInputToWriteY<<" "<<userInputToWriteZ<<" "<<maxOfNearPoints<<" "<<inputDistance<<endl;
                 tmpArmPositionDatabaseTxt.close();
 
                 userInputToWriteX = userInputX;
